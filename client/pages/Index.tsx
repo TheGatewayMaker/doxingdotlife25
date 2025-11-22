@@ -656,22 +656,22 @@ export default function Index() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-3">
+                <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 animate-fadeIn">
                   <button
                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                     disabled={currentPage === 1}
-                    className="px-4 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    className="px-3 sm:px-4 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg active:scale-95 text-sm sm:text-base"
                   >
-                    ← Previous
+                    ← Prev
                   </button>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1 flex-wrap justify-center">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                       (page) => (
                         <button
                           key={page}
                           onClick={() => setCurrentPage(page)}
                           className={cn(
-                            "w-10 h-10 rounded-lg font-medium transition-all text-sm",
+                            "w-9 h-9 sm:w-10 sm:h-10 rounded-lg font-medium transition-all text-xs sm:text-sm shadow-sm hover:shadow-md",
                             currentPage === page
                               ? "bg-accent text-accent-foreground"
                               : "bg-card border border-border hover:border-accent text-foreground",
@@ -687,7 +687,7 @@ export default function Index() {
                       setCurrentPage(Math.min(totalPages, currentPage + 1))
                     }
                     disabled={currentPage === totalPages}
-                    className="px-4 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    className="px-3 sm:px-4 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg active:scale-95 text-sm sm:text-base"
                   >
                     Next →
                   </button>
