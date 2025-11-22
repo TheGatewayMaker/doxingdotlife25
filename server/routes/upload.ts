@@ -1,12 +1,5 @@
 import { RequestHandler } from "express";
-import {
-  writeFileSync,
-  mkdirSync,
-  existsSync,
-  readFileSync,
-  appendFileSync,
-} from "fs";
-import { join } from "path";
+import { uploadMediaFile, uploadPostMetadata, getServersList, updateServersList } from "../utils/r2-storage";
 
 interface UploadRequest {
   title: string;
@@ -16,10 +9,9 @@ interface UploadRequest {
   server?: string;
 }
 
-export const handleUpload: RequestHandler = (req, res) => {
+export const handleUpload: RequestHandler = async (req, res) => {
   try {
-    const { title, description, country, city, server } =
-      req.body as UploadRequest;
+    const { title, description, country, city, server } = req.body as UploadRequest;
     const file = req.file;
 
     if (!title || !description || !file) {
@@ -27,55 +19,40 @@ export const handleUpload: RequestHandler = (req, res) => {
       return;
     }
 
-    const dataDir = join(process.cwd(), "dist", "data");
-    const postDir = join(dataDir, title.replace(/\s+/g, "_"));
+    const postId = Date.now().toString();
+    const mediaFileName = file.originalname || `${Date.now()}-media`;
 
-    if (!existsSync(dataDir)) {
-      mkdirSync(dataDir, { recursive: true });
-    }
-
-    if (!existsSync(postDir)) {
-      mkdirSync(postDir, { recursive: true });
-    }
-
-    const mediaFileName = file.filename || `${Date.now()}-${file.originalname}`;
-    const mediaPath = join(postDir, mediaFileName);
-    writeFileSync(mediaPath, file.buffer);
+    const mediaUrl = await uploadMediaFile(
+      postId,
+      mediaFileName,
+      file.buffer,
+      file.mimetype || "application/octet-stream",
+    );
 
     const postMetadata = {
-      id: Date.now().toString(),
+      id: postId,
       title,
       description,
       country: country || "",
       city: city || "",
       server: server || "",
-      mediaPath: mediaFileName,
+      mediaFiles: [mediaFileName],
       createdAt: new Date().toISOString(),
     };
 
-    const metadataPath = join(postDir, "metadata.json");
-    writeFileSync(metadataPath, JSON.stringify(postMetadata, null, 2));
+    await uploadPostMetadata(postId, postMetadata);
 
-    if (server) {
-      const serversPath = join(dataDir, "serverslist.txt");
-      const existingContent = existsSync(serversPath)
-        ? readFileSync(serversPath, "utf-8")
-        : "";
-      const servers = existingContent
-        .split("\n")
-        .filter((line) => line.trim())
-        .filter((s) => s !== server);
-
-      servers.push(server);
-      servers.sort();
-
-      writeFileSync(serversPath, servers.join("\n"));
+    if (server && server.trim()) {
+      const servers = await getServersList();
+      const updatedServers = Array.from(new Set([...servers, server]));
+      updatedServers.sort();
+      await updateServersList(updatedServers);
     }
 
     res.json({
       success: true,
       message: "Post uploaded successfully",
-      postId: postMetadata.id,
+      postId,
     });
   } catch (error) {
     console.error("Upload error:", error);
