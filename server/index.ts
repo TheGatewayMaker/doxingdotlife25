@@ -11,6 +11,12 @@ import {
   handleDeleteMediaFile,
   handleUpdatePost,
 } from "./routes/admin";
+import {
+  handleLogin,
+  handleLogout,
+  handleCheckAuth,
+  authMiddleware,
+} from "./routes/auth";
 
 const upload = multer({
   storage: multer.memoryStorage(),
