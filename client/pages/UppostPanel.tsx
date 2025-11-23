@@ -73,15 +73,30 @@ export default function UppostPanel() {
   };
 
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setMedia(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setMediaPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      newFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setMediaPreviews((prev) => [
+            ...prev,
+            {
+              file,
+              preview: reader.result as string,
+              type: file.type,
+            },
+          ]);
+        };
+        reader.readAsDataURL(file);
+      });
+      setMediaFiles((prev) => [...prev, ...newFiles]);
     }
+  };
+
+  const removeMediaFile = (index: number) => {
+    setMediaFiles((prev) => prev.filter((_, i) => i !== index));
+    setMediaPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const resetForm = () => {
