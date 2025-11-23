@@ -170,20 +170,31 @@ export default function PostDetail() {
                             }}
                           />
                         ) : file.type.startsWith("video/") ? (
-                          <video
-                            controls
-                            preload="metadata"
-                            crossOrigin="anonymous"
-                            className="w-full h-64 bg-muted"
-                            onError={(e) => {
-                              console.error("Video error:", e);
-                            }}
-                          >
-                            <source src={file.url} type={file.type} />
-                            <p className="p-4 text-muted-foreground">
-                              Your browser doesn't support HTML5 video. Download the video: <a href={file.url} download={file.name} className="text-accent hover:underline">{file.name}</a>
-                            </p>
-                          </video>
+                          <div className="relative w-full h-64 bg-muted flex items-center justify-center">
+                            <video
+                              controls
+                              preload="metadata"
+                              crossOrigin="anonymous"
+                              className="w-full h-full"
+                              style={{ maxHeight: "256px" }}
+                              onError={(e) => {
+                                console.error("Video error:", e);
+                              }}
+                            >
+                              <source src={file.url} type={file.type} />
+                              <source src={file.url} type="video/mp4" />
+                              <p className="p-4 text-muted-foreground text-center">
+                                Video format not supported in your browser.{" "}
+                                <a
+                                  href={file.url}
+                                  download={file.name}
+                                  className="text-accent hover:underline"
+                                >
+                                  Download video
+                                </a>
+                              </p>
+                            </video>
+                          </div>
                         ) : file.type.startsWith("audio/") ? (
                           <div className="w-full h-64 bg-muted flex items-center justify-center">
                             <audio
