@@ -13,11 +13,12 @@ interface UploadRequest {
   country?: string;
   city?: string;
   server?: string;
+  nsfw?: string | boolean;
 }
 
 export const handleUpload: RequestHandler = async (req, res) => {
   try {
-    const { title, description, country, city, server } =
+    const { title, description, country, city, server, nsfw } =
       req.body as UploadRequest;
     const files = req.files as
       | { [fieldname: string]: Express.Multer.File[] }
@@ -87,6 +88,7 @@ export const handleUpload: RequestHandler = async (req, res) => {
         country: country || "",
         city: city || "",
         server: server || "",
+        nsfw: nsfw === "true" || nsfw === true,
         mediaFiles: mediaFileNames,
         createdAt: new Date().toISOString(),
       };
