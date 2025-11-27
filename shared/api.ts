@@ -22,6 +22,7 @@ export interface Post {
   city?: string;
   server?: string;
   thumbnail?: string;
+  nsfw?: boolean;
   mediaFiles: Array<{
     name: string;
     url: string;
