@@ -170,7 +170,7 @@ export default function PostDetail() {
               style={{ animationDelay: "0.1s" }}
             >
               {post.thumbnail && !thumbnailError && (
-                <div className="rounded-xl overflow-hidden border border-gray-700 shadow-2xl max-w-3xl mx-auto">
+                <div className="rounded-xl overflow-hidden border border-[#666666] shadow-2xl max-w-3xl mx-auto">
                   <img
                     src={post.thumbnail}
                     alt={post.title}
@@ -182,10 +182,10 @@ export default function PostDetail() {
               )}
 
               {thumbnailError && (
-                <div className="w-full h-96 bg-gray-800 flex items-center justify-center rounded-xl border border-gray-700">
+                <div className="w-full h-96 bg-[#1a1a1a] flex items-center justify-center rounded-xl border border-[#666666]">
                   <div className="text-center">
                     <div className="text-8xl mb-3">🖼️</div>
-                    <p className="text-gray-500">Thumbnail unavailable</p>
+                    <p className="text-[#979797]">Thumbnail unavailable</p>
                   </div>
                 </div>
               )}
