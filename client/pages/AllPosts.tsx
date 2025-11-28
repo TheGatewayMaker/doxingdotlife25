@@ -307,7 +307,7 @@ export default function AllPosts() {
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-3 text-white tracking-tighter leading-tight">
                 All Posts
               </h1>
-              <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-400 mb-6 max-w-2xl">
+              <p className="text-base sm:text-lg md:text-xl font-semibold text-[#979797] mb-6 max-w-2xl">
                 Browse all the doxed individuals in our database
               </p>
             </div>
