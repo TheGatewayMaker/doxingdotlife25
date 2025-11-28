@@ -319,18 +319,7 @@ export default function AllPosts() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-800 border-2 border-slate-700 hover:border-blue-500 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base transition-all shadow-md hover:shadow-lg hover:shadow-blue-500/30"
               />
-              <svg
-                className="absolute right-4 sm:right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
+              <Search className="absolute right-4 sm:right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
             </div>
 
             {/* Categories Section */}
