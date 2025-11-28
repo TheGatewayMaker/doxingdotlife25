@@ -286,6 +286,57 @@ export default function EditPostModal({
             </div>
           </div>
 
+          {/* Trend Toggle */}
+          <div>
+            <div className="flex items-center gap-3 bg-amber-900/20 border border-amber-600/50 rounded-lg p-4">
+              <input
+                type="checkbox"
+                id="trend-toggle"
+                checked={isTrend}
+                onChange={(e) => setIsTrend(e.target.checked)}
+                disabled={isSaving}
+                className="w-5 h-5 accent-amber-600 rounded cursor-pointer disabled:opacity-50"
+              />
+              <label htmlFor="trend-toggle" className="flex-1 cursor-pointer">
+                <div className="flex items-center gap-2 mb-1">
+                  <svg
+                    className="w-4 h-4 text-amber-400"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <p className="text-sm font-bold text-amber-400">Mark as Trending</p>
+                </div>
+                <p className="text-xs text-amber-300">
+                  Posts marked as trending will appear first with a golden
+                  gradient background
+                </p>
+              </label>
+            </div>
+          </div>
+
+          {/* Trend Rank */}
+          {isTrend && (
+            <div>
+              <label className="text-sm font-semibold text-foreground block mb-2">
+                Trend Rank Number
+              </label>
+              <input
+                type="number"
+                value={trendRank}
+                onChange={(e) => setTrendRank(e.target.value)}
+                disabled={isSaving}
+                className="w-full px-4 py-2 bg-muted border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all disabled:opacity-50"
+                placeholder="Enter rank number (1 = first, 2 = second, etc.)"
+                min="1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Lower numbers appear first in the trending section
+              </p>
+            </div>
+          )}
+
           {/* City */}
           <div>
             <label className="text-sm font-semibold text-foreground block mb-2">
