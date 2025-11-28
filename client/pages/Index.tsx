@@ -335,8 +335,8 @@ export default function Index() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* Country Dropdown */}
                 <div className="relative group">
-                  <label className="text-sm font-bold text-white block mb-3 flex items-center gap-2">
-                    <GlobeIcon className="w-4 h-4 text-blue-400" />
+                  <label className="text-sm font-bold text-foreground block mb-3 flex items-center gap-2">
+                    <GlobeIcon className="w-4 h-4 text-muted-foreground" />
                     By Country
                   </label>
                   <div className="relative">
@@ -347,7 +347,7 @@ export default function Index() {
                       }
                       value={countrySearch}
                       onChange={(e) => setCountrySearch(e.target.value)}
-                      className="w-full px-4 py-3 pr-10 bg-slate-800 border border-slate-700 hover:border-blue-500 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-all shadow-sm hover:shadow-md hover:shadow-blue-500/20"
+                      className="w-full px-4 py-3 pr-10 bg-card border border-border hover:border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-muted/50 focus:border-muted text-sm transition-all"
                     />
                     {selectedCountry && (
                       <button
@@ -355,7 +355,7 @@ export default function Index() {
                           setSelectedCountry("");
                           setCountrySearch("");
                         }}
-                        className="absolute top-1/2 right-3 transform -translate-y-1/2 text-accent hover:text-accent/80 transition-colors hover:scale-110"
+                        className="absolute top-1/2 right-3 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         title="Clear selection"
                       >
                         <CloseIcon className="w-5 h-5" />
