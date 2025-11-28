@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useDebounce } from "@/hooks/use-debounce";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Post, PostsResponse } from "@shared/api";
@@ -116,6 +117,7 @@ export default function AdminPanel() {
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [countrySearch, setCountrySearch] = useState("");
 
@@ -157,8 +159,8 @@ export default function AdminPanel() {
   useEffect(() => {
     let filtered = posts;
 
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
+    if (debouncedSearchQuery) {
+      const query = debouncedSearchQuery.toLowerCase();
       filtered = filtered.filter(
         (post) =>
           post.title.toLowerCase().includes(query) ||
@@ -173,7 +175,7 @@ export default function AdminPanel() {
 
     setFilteredPosts(filtered);
     setCurrentPage(1);
-  }, [posts, searchQuery, selectedCountry]);
+  }, [posts, debouncedSearchQuery, selectedCountry]);
 
   useEffect(() => {
     const start = (currentPage - 1) * postsPerPage;

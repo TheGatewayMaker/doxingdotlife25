@@ -231,6 +231,8 @@ export default function UppostPanel() {
         headers: {
           Authorization: `Bearer ${idToken}`,
         },
+        // Increase timeout for mobile devices with multiple files
+        signal: AbortSignal.timeout(5 * 60 * 1000), // 5 minutes
       });
 
       if (!response.ok) {

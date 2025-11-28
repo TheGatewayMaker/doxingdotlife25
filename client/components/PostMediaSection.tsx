@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Download, Play } from "lucide-react";
+import { addWatermarkToImage, addWatermarkToVideo } from "@/lib/watermark";
+import { toast } from "sonner";
 
 interface MediaFile {
   name: string;
@@ -31,13 +33,26 @@ export default function PostMediaSection({
     return null;
   }
 
-  const handleDownload = (mediaFile: MediaFile) => {
-    const link = document.createElement("a");
-    link.href = mediaFile.url;
-    link.download = mediaFile.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async (mediaFile: MediaFile) => {
+    try {
+      if (mediaFile.type.startsWith("image/")) {
+        await addWatermarkToImage(mediaFile.url, mediaFile.name);
+      } else if (mediaFile.type.startsWith("video/")) {
+        await addWatermarkToVideo(mediaFile.url, mediaFile.name);
+      } else {
+        // For non-image/video files, download normally
+        const link = document.createElement("a");
+        link.href = mediaFile.url;
+        link.download = mediaFile.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      toast.success("File downloaded with watermark");
+    } catch (error) {
+      console.error("Download error:", error);
+      toast.error("Failed to download file");
+    }
   };
 
   return (

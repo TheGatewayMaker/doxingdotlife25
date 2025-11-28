@@ -24,15 +24,26 @@ export const handleUpload: RequestHandler = async (req, res) => {
       | { [fieldname: string]: Express.Multer.File[] }
       | undefined;
 
+    // Validate required fields with detailed logging
     if (!title || !description || !files?.media || !files?.thumbnail) {
       console.error("Missing required fields", {
         title: !!title,
         description: !!description,
         media: !!files?.media,
-        mediaCount: files?.media?.length,
+        mediaCount: Array.isArray(files?.media) ? files.media.length : 0,
         thumbnail: !!files?.thumbnail,
       });
       res.status(400).json({ error: "Missing required fields" });
+      return;
+    }
+
+    // Ensure media is an array
+    if (!Array.isArray(files.media)) {
+      console.error("Media files are not in array format", {
+        mediaType: typeof files.media,
+        mediaKeys: Object.keys(files.media || {}),
+      });
+      res.status(400).json({ error: "Media files format is invalid" });
       return;
     }
 
@@ -41,42 +52,94 @@ export const handleUpload: RequestHandler = async (req, res) => {
       return;
     }
 
+    // Validate thumbnail is an array with at least one file
+    if (!Array.isArray(files.thumbnail) || files.thumbnail.length === 0) {
+      console.error("Thumbnail validation failed", {
+        thumbnailType: typeof files.thumbnail,
+        thumbnailLength: Array.isArray(files.thumbnail)
+          ? files.thumbnail.length
+          : 0,
+      });
+      res.status(400).json({ error: "Thumbnail is required" });
+      return;
+    }
+
     const thumbnailFile = files.thumbnail[0];
     const postId = Date.now().toString();
     const thumbnailFileName = `thumbnail-${Date.now()}`;
 
     try {
+      const mediaCount = files.media.length;
       console.log(
-        `[${new Date().toISOString()}] Starting upload for post ${postId} with ${files.media.length} media file(s)`,
+        `[${new Date().toISOString()}] Starting upload for post ${postId} with ${mediaCount} media file(s)`,
       );
 
-      // Upload thumbnail
-      const thumbnailUrl = await uploadMediaFile(
-        postId,
-        thumbnailFileName,
-        thumbnailFile.buffer,
-        thumbnailFile.mimetype || "image/jpeg",
-      );
-
-      // Upload all media files
-      const mediaFileNames: string[] = [];
-      for (let i = 0; i < files.media.length; i++) {
-        const mediaFile = files.media[i];
-        const sanitizedName = mediaFile.originalname || `media-${i + 1}`;
-        const mediaFileName = `${Date.now()}-${i}-${sanitizedName}`;
-
-        console.log(
-          `Uploading media file ${i + 1}/${files.media.length}: ${mediaFileName}`,
-        );
-
-        await uploadMediaFile(
+      // Upload thumbnail with error handling
+      let thumbnailUrl: string;
+      try {
+        thumbnailUrl = await uploadMediaFile(
           postId,
-          mediaFileName,
-          mediaFile.buffer,
-          mediaFile.mimetype || "application/octet-stream",
+          thumbnailFileName,
+          thumbnailFile.buffer,
+          thumbnailFile.mimetype || "image/jpeg",
         );
+        console.log(
+          `[${new Date().toISOString()}] ✅ Thumbnail uploaded successfully for post ${postId}`,
+        );
+      } catch (thumbnailError) {
+        console.error("Thumbnail upload failed:", thumbnailError);
+        throw new Error(
+          `Failed to upload thumbnail: ${thumbnailError instanceof Error ? thumbnailError.message : String(thumbnailError)}`,
+        );
+      }
 
-        mediaFileNames.push(mediaFileName);
+      // Upload all media files with improved error handling
+      const mediaFileNames: string[] = [];
+      const uploadErrors: Array<{ index: number; error: string }> = [];
+
+      for (let i = 0; i < files.media.length; i++) {
+        try {
+          const mediaFile = files.media[i];
+
+          // Validate file exists and has buffer
+          if (!mediaFile || !mediaFile.buffer) {
+            throw new Error(`File ${i + 1} is missing or has no buffer data`);
+          }
+
+          const sanitizedName = mediaFile.originalname || `media-${i + 1}`;
+          const mediaFileName = `${Date.now()}-${i}-${sanitizedName}`;
+
+          console.log(
+            `Uploading media file ${i + 1}/${mediaCount}: ${mediaFileName} (${(mediaFile.size / 1024 / 1024).toFixed(2)}MB)`,
+          );
+
+          await uploadMediaFile(
+            postId,
+            mediaFileName,
+            mediaFile.buffer,
+            mediaFile.mimetype || "application/octet-stream",
+          );
+
+          mediaFileNames.push(mediaFileName);
+          console.log(
+            `[${new Date().toISOString()}] ✅ File ${i + 1}/${mediaCount} uploaded successfully`,
+          );
+        } catch (fileError) {
+          const errorMsg =
+            fileError instanceof Error ? fileError.message : String(fileError);
+          console.error(`Error uploading file ${i + 1}:`, errorMsg);
+          uploadErrors.push({
+            index: i + 1,
+            error: errorMsg,
+          });
+
+          // Continue uploading other files, but we'll report the error
+          if (i === files.media.length - 1 && uploadErrors.length > 0) {
+            throw new Error(
+              `Failed to upload ${uploadErrors.length} file(s): ${uploadErrors.map((e) => `File ${e.index}: ${e.error}`).join("; ")}`,
+            );
+          }
+        }
       }
 
       console.log(`Successfully uploaded ${mediaFileNames.length} media files`);
