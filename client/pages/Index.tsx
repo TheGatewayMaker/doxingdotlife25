@@ -348,7 +348,7 @@ export default function Index() {
                       }
                       value={countrySearch}
                       onChange={(e) => setCountrySearch(e.target.value)}
-                      className="w-full px-4 py-2.5 sm:py-3 pr-10 bg-gray-800 border border-gray-700 hover:border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-gray-600 text-sm transition-all"
+                      className="w-full px-4 py-2.5 sm:py-3 pr-10 bg-[#1a1a1a] border border-[#666666] hover:border-[#0088CC] rounded-lg text-white placeholder-[#979797] focus:outline-none focus:ring-2 focus:ring-[#0088CC] focus:border-[#0088CC] text-sm transition-all"
                     />
                     {selectedCountry && (
                       <button
