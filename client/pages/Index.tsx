@@ -356,7 +356,7 @@ export default function Index() {
                           setSelectedCountry("");
                           setCountrySearch("");
                         }}
-                        className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                        className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[#979797] hover:text-white transition-colors"
                         title="Clear selection"
                       >
                         <CloseIcon className="w-4 h-4 sm:w-5 sm:h-5" />
