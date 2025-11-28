@@ -380,5 +380,12 @@ export const updatePostMetadataField = async (
   };
 
   await uploadPostMetadata(postId, updatedMetadata);
-  return updatedMetadata;
+
+  // Verify the upload was successful by reading it back
+  const verifiedMetadata = await getPostMetadata(postId);
+  if (!verifiedMetadata) {
+    throw new Error("Failed to verify post metadata update");
+  }
+
+  return verifiedMetadata;
 };
